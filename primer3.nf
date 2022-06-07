@@ -30,8 +30,8 @@ process primer3_conf {
     shell:
 '''
 
-echo "SEQUENCE_ID=$(seqkit fx2tab | cut -f 1)
-SEQUENCE_TEMPLATE=$(seqkit fx2tab | cut -f 2)
+echo "SEQUENCE_ID=$(seqkit fx2tab !{target} | cut -f 1)
+SEQUENCE_TEMPLATE=$(seqkit fx2tab !{target} | cut -f 2)
 PRIMER_TASK=generic
 PRIMER_PICK_LEFT_PRIMER=1
 PRIMER_PICK_INTERNAL_OLIGO=0
@@ -62,7 +62,7 @@ process primer3_calc {
 '''
 mkdir -p kmer_lists
 ln ./*.list kmer_lists
-./primer3_core !{conf} > primer3_results.txt
+primer3_core !{conf} > primer3_results.txt
 '''
 }
 
