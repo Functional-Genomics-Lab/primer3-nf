@@ -23,13 +23,15 @@ process primer3_conf {
     cache 'deep'
     tag "$fasta"
     input:
-      path fasta    
+      path fasta
+      path target    
     output:
       path "custom_primer3.conf"
     shell:
 '''
-echo "SEQUENCE_ID=example
-SEQUENCE_TEMPLATE=tattggtgaagcctcaggtagtgcagaatatgaaacttcaggatccagtgggcatgctactggtagtgctgccggccttacaggcattatggtggcaaagtcgacagagttta
+
+echo "SEQUENCE_ID=$(seqkit fx2tab | cut -f 1)
+SEQUENCE_TEMPLATE=$(seqkit fx2tab | cut -f 2)
 PRIMER_TASK=generic
 PRIMER_PICK_LEFT_PRIMER=1
 PRIMER_PICK_INTERNAL_OLIGO=0
