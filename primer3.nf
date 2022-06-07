@@ -49,18 +49,21 @@ PRIMER_MASK_KMERLIST_PREFIX=!{fasta}
 }
 
 process primer3_calc {
-    conda "genometester4"
+    conda "primer3"
     publishDir "results/${task.process}",mode:'link',overwrite:'true'
     cache 'deep'
     tag "$fasta"
     input:
-      path fasta    
+      path conf
+      path kmer_lists    
     output:
       tuple path("${fasta}.crispr.db"),path("${fasta}.crispr.db.header")
     shell:
-      '''
-      
-      '''
+'''
+mkdir -p kmer_lists
+ln ./*.list kmer_lists
+./primer3_core !{conf} > primer3_results.txt
+'''
 }
 
 
@@ -69,6 +72,7 @@ workflow {
   ref = channel.fromPath(params.genome)
   target = channel.fromPath(params.target)
 
-  primer3_conf(ref)
+  primer3_conf(ref,target)
   primer3_index(ref)
+  primer3_calc(primer3_conf.out,primer3_index.out)
 }
