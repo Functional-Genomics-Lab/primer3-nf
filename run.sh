@@ -2,4 +2,4 @@
 
 echo $1
 
-nextflow run -resume primer3.nf --genome ./example.fa --targetseq $1
+nextflow run -resume primer3.nf --genome examples/example.fa --targetseq $1
