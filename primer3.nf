@@ -1,5 +1,19 @@
 nextflow.enable.dsl=2
 
+process seqkit_fetch_target {
+conda "seqkit"
+input:
+ val seq
+ path fasta
+output:
+ path "target.fa"
+shell:
+'''
+seqkit locate -i --gtf -p "!{seq}" !{fasta} > target.gtf
+seqkit subseq --gtf target.gtf -u 500 -d 500 !{fasta} > target.fa
+'''
+}
+
 process primer3_index {
     conda "genometester4"
     publishDir "results/${task.process}",mode:'link',overwrite:'true'
@@ -64,21 +78,27 @@ process primer3_calc {
       path conf
       path kmer_lists    
     output:
-      path "primer3_results.txt"
+      path "*primer3.txt"
     shell:
 '''
 mkdir -p kmer_lists
 ln ./*.list kmer_lists
 
-ID=$(head -n 1 !{conf} | cut -f 2 -d '=')
+ID=$(head -n 1 !{conf} | cut -f 2 -d '=' | cut -f 2 -d ' ')
 
-primer3_core !{conf} > primer3_results.txt
+primer3_core -h 2>&1 | grep "This is primer3" > ${ID}_primer3.txt
+cat ${ID}_primer3.txt ## Print version to stdout
+primer3_core !{conf} >> ${ID}_primer3.txt
 '''
 }
 
 process primer3_results2fasta {
+publishDir "results/${task.process}",mode:'link',overwrite:'true'
+cache 'deep'
 input:
  path results
+output:
+ path "${results}.fa"
 shell:
 '''
 #!/usr/bin/env python
@@ -91,21 +111,33 @@ with open("!{results}", "r") as input_handle:
     data = input_handle.read()
 ##print(data)
 
-id_regex = 'SEQUENCE_ID=(.+)'
-bespoke_regex='(?P<id>PRIMER_PAIR_[0-9]+)_PENALTY=(?P<penalty>[0-9.]+).+?PRIMER_LEFT_[0-9]+_SEQUENCE=(?P<left>[atcgATCGnN]+).+?PRIMER_RIGHT_[0-9]+_SEQUENCE=(?P<right>[atcgATCGnN]+).+?PRIMER_PAIR_[0-9]+_PRODUCT_TM=[0-9.]+'
+id_match = re.search('SEQUENCE_ID=(.+)',data)
+id = id_match.group(1)
+
+bespoke_regex = '(?P<id>PRIMER_PAIR_[0-9]+)_PENALTY=(?P<penalty>[0-9.]+).+?PRIMER_LEFT_[0-9]+_SEQUENCE=(?P<left>[atcgATCGnN]+).+?PRIMER_RIGHT_[0-9]+_SEQUENCE=(?P<right>[atcgATCGnN]+).+?PRIMER_PAIR_[0-9]+_PRODUCT_SIZE=(?P<size>[0-9]+).+?PRIMER_PAIR_[0-9]+_PRODUCT_TM=[0-9.]+'
 
 matches = list(re.finditer(bespoke_regex,data,flags=re.MULTILINE|re.DOTALL))
 
 output_handle = open("!{results}.fa", "w")
 for m in matches:
-    record_id = ">
-
+    line = ">{ID} primer3 {SUBID} penalty:{PEN} type:LEFT product:{PROD}bp".format(ID=id,SUBID=m.group("id"),PEN=m.group("penalty"),PROD=m.group("size"))+os.linesep
+    output_handle.write(line)
+    line = m.group("left")+os.linesep
+    output_handle.write(line)
+    line = ">{ID} primer3 {SUBID} penalty:{PEN} type:RIGHT product:{PROD}bp".format(ID=id,SUBID=m.group("id"),PEN=m.group("penalty"),PROD=m.group("size"))+os.linesep
+    output_handle.write(line)
+    line = m.group("right")+os.linesep
+    output_handle.write(line)
+output_handle.close()
 '''
 }
 
 workflow {
-  ref = channel.fromPath(params.genome)
-  target = channel.fromPath(params.target)
+  ref = Channel.fromPath(params.genome)
+  seq = Channel.of(params.targetseq)
+  seq.view()
+  seqkit_fetch_target(seq,ref)
+  target = seqkit_fetch_target.out
 
   primer3_conf(ref,target)
   primer3_index(ref)
