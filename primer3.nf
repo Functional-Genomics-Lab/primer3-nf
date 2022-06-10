@@ -73,7 +73,7 @@ process primer3_calc {
     conda "primer3"
     publishDir "results/${task.process}",mode:'link',overwrite:'true'
     cache 'deep'
-    tag "$fasta"
+    tag "$kmer_lists $conf"
     input:
       path conf
       path kmer_lists    
@@ -99,6 +99,7 @@ input:
  path results
 output:
  path "${results}.fa"
+tag "$results"
 shell:
 '''
 #!/usr/bin/env python
@@ -143,5 +144,4 @@ workflow {
   primer3_index(ref)
   primer3_calc(primer3_conf.out,primer3_index.out)
   primer3_results2fasta(primer3_calc.out)
-
 }
