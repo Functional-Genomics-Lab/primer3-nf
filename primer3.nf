@@ -6,17 +6,25 @@ input:
  val seq
  path fasta
 output:
- path "target.fa"
+ path "${seq}_target.fa" , emit:fasta
+ path "${seq}_target.gtf" , emit:gtf
 shell:
 '''
-seqkit locate -i --gtf -p "!{seq}" !{fasta} > target.gtf
+echo ">seq
+!{seq}
+" > seq.fa
 
-seqkit subseq --gtf target.gtf -u 500 -d 500 !{fasta} > target.fa
+seqkit locate -i --gtf -p "!{seq}" !{fasta} > !{seq}_target.gtf
 
-if [[ ! -s target.gtf ]]
+seqkit subseq --gtf !{seq}_target.gtf -u 50000 -d 50000 !{fasta} > !{seq}_target.fa
+
+if [[ ! -s !{seq}_target.gtf ]]
 then
 exit 7
 fi
+
+seqkit stat !{seq}_target.gtf
+seqkit stat !{seq}_target.fa
 '''
 }
 
@@ -52,13 +60,18 @@ process primer3_conf {
 ##The MASK_KMERLIST does give an error if run with a dummy value, so expect it is working?
 ## See the Primer3 manual for details on these parameters
 
-##The "SEQUENCE_TARGET" parameter is fairly important, as that ensures the PCR product goes across the gRNA site
+## The "SEQUENCE_TARGET" parameter is fairly important, as that ensures the PCR product goes across the gRNA site
+## It should be the value of the `-u` parameter in seqkit_fetch_target
+##
 ## The SEQUENCE_EXCLUDED_REGION ensures it doesn't pick a product right on the gRNA site
+## It should be the value of the `-u` parameter in seqkit_fetch_target, minus 1 half of 70 (35)
+## 
+##
 
 echo "SEQUENCE_ID=$(seqkit fx2tab !{target} | cut -f 1)
 SEQUENCE_TEMPLATE=$(seqkit fx2tab !{target} | cut -f 2)
-SEQUENCE_TARGET=500,20
-SEQUENCE_EXCLUDED_REGION=465,70
+SEQUENCE_TARGET=50000,20
+SEQUENCE_EXCLUDED_REGION=49965,70
 PRIMER_TASK=generic
 PRIMER_PICK_LEFT_PRIMER=1
 PRIMER_PICK_INTERNAL_OLIGO=0
@@ -144,7 +157,7 @@ workflow {
   seq = Channel.of(params.targetseq)
   seq.view()
   seqkit_fetch_target(seq,ref)
-  target = seqkit_fetch_target.out
+  target = seqkit_fetch_target.out.fasta
 
   primer3_conf(ref,target)
   primer3_index(ref)
