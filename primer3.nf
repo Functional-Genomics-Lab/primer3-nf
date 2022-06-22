@@ -10,7 +10,13 @@ output:
 shell:
 '''
 seqkit locate -i --gtf -p "!{seq}" !{fasta} > target.gtf
+
 seqkit subseq --gtf target.gtf -u 500 -d 500 !{fasta} > target.fa
+
+if [[ ! -s target.gtf ]]
+then
+exit 7
+fi
 '''
 }
 
