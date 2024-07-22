@@ -6,16 +6,13 @@ process primer3_calc {
 
     input:
     path conf
-    path kmer_lists
+    path kmer_lists, stageAs: 'kmer_lists/*'
 
     output:
     path "*primer3.txt"
 
     shell:
     '''
-    mkdir -p kmer_lists
-    ln ./*.list kmer_lists
-
     ID=$(head -n 1 !{conf} | cut -f 2 -d '=' | cut -f 2 -d ' ')
 
     primer3_core -h 2>&1 | grep "This is primer3" > ${ID}_primer3.txt
