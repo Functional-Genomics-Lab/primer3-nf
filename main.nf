@@ -153,7 +153,7 @@ output_handle.close()
 }
 
 workflow {
-  ref = Channel.fromPath(params.genome)
+  ref = Channel.fromPath(params.fasta)
   seq = Channel.of(params.targetseq)
   seq.view()
   seqkit_fetch_target(seq,ref)
