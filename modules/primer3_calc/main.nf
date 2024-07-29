@@ -2,7 +2,7 @@ process primer3_calc {
     conda "primer3"
     publishDir "results/${task.process}", overwrite:'true'
     cache 'deep'
-    tag "$kmer_lists $conf"
+    tag "$conf.baseName"
 
     input:
     path conf

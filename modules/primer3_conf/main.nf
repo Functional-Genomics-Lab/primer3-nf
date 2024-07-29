@@ -1,7 +1,7 @@
 process primer3_conf {
     publishDir "results/${task.process}",mode:'link',overwrite:'true'
     cache 'deep'
-    tag "$fasta"
+    tag "$target.baseName"
 
     input:
     path target
