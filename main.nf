@@ -28,7 +28,7 @@ workflow {
         ch_input,
         params.fasta
     ).fasta
-        .splitFasta( record: [id: true, seqString: true] )
+        .splitFasta(file: true)
         .dump()
 
     // Run primer3 on the sequences

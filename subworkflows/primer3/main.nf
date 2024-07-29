@@ -6,11 +6,11 @@ include { primer3_results2fasta } from "../../modules/primer3_results2fasta/"
 
 workflow PRIMER3 {
   take:
-  seq // [id, sequence]
+  seq_fasta // [id, sequence]
   ref // fasta
 
   main:
-  seqkit_fetch_target(seq,ref)
+  seqkit_fetch_target(seq_fasta,ref)
   target = seqkit_fetch_target.out.fasta
 
   primer3_conf(target,ref)
