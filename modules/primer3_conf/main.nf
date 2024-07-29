@@ -1,6 +1,7 @@
 process primer3_conf {
     publishDir "results/${task.process}",mode:'link',overwrite:'true'
     cache 'deep'
+    conda "seqkit"
     tag "$target.baseName"
 
     input:
