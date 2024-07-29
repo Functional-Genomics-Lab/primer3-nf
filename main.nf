@@ -23,17 +23,16 @@ include { BEDTOOLS_GETFASTA } from './modules/nf-core/bedtools/getfasta'
 include { PRIMER3 } from './subworkflows/primer3'
 
 workflow {
+    ch_fasta = channel.fromPath(params.fasta)
     // Pull raw sequences in the bed files from the reference genome
-    sequences = BEDTOOLS_GETFASTA (
+    BEDTOOLS_GETFASTA (
         ch_input,
-        params.fasta
-    ).fasta
-        .splitFasta(file: true)
-        .dump()
+        ch_fasta.first()
+    )
 
     // Run primer3 on the sequences
     PRIMER3 (
-        sequences,
-        Channel.fromPath(params.fasta),
+        BEDTOOLS_GETFASTA.out.fasta,
+        ch_fasta.first(),
     )
 }
