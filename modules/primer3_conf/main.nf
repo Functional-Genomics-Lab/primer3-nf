@@ -4,8 +4,8 @@ process primer3_conf {
     tag "$fasta"
 
     input:
-    path fasta
     path target
+    path fasta
 
     output:
     path "custom_primer3.conf"

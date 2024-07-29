@@ -7,13 +7,13 @@ include { primer3_calc } from "./modules/primer3_calc/"
 include { primer3_results2fasta } from "./modules/primer3_results2fasta/"
 
 workflow {
-  ref = Channel.fromPath(params.fasta)
   seq = Channel.of(params.targetseq)
+  ref = Channel.fromPath(params.fasta)
   seq.view()
   seqkit_fetch_target(seq,ref)
   target = seqkit_fetch_target.out.fasta
 
-  primer3_conf(ref,target)
+  primer3_conf(target,ref)
   primer3_index(ref)
   primer3_calc(primer3_conf.out,primer3_index.out)
   primer3_results2fasta(primer3_calc.out)
