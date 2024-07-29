@@ -1,13 +1,13 @@
 process primer3_results2fasta {
     publishDir "results/${task.process}",mode:'link',overwrite:'true'
     cache 'deep'
+    tag "$results"
 
     input:
     path results
 
     output:
     path "${results}.fa"
-    tag "$results"
 
     shell:
     '''
