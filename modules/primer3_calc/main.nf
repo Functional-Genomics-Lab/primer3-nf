@@ -6,7 +6,7 @@ process primer3_calc {
 
     input:
     path conf
-    path kmer_lists, stageAs: 'kmer_lists/*'
+    // path kmer_lists, stageAs: 'kmer_lists/*'
 
     output:
     path "*primer3.txt"
