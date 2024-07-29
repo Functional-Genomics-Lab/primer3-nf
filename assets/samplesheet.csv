@@ -1,2 +1,3 @@
 sample,bed
 test-datasets,https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.bed
+multiple-regions,./examples/multiple-regions.bed
