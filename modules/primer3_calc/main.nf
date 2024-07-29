@@ -9,14 +9,11 @@ process primer3_calc {
     path kmer_lists, stageAs: 'kmer_lists/*'
 
     output:
-    path "*primer3.txt"
+    stdout
+    // TODO eval version
 
     shell:
     '''
-    ID=$(head -n 1 !{conf} | cut -f 2 -d '=' | cut -f 2 -d ' ')
-
-    primer3_core -h 2>&1 | grep "This is primer3" > ${ID}_primer3.txt
-    cat ${ID}_primer3.txt ## Print version to stdout
-    primer3_core !{conf} >> ${ID}_primer3.txt
+    primer3_core !{conf}
     '''
 }

@@ -18,8 +18,8 @@ workflow PRIMER3 {
   primer3_conf(target,ref)
   primer3_index(ref)
   primer3_calc(primer3_conf.out,primer3_index.out)
-  primer3_results2fasta(primer3_calc.out)
+  // TODO primer3_results2fasta(primer3_calc.out)
 
-  emit:
-  primer3_results2fasta.out
+  // emit:
+  // primer3_results2fasta.out
 }

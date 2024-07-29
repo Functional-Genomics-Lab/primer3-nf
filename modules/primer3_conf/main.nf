@@ -2,14 +2,14 @@ process primer3_conf {
     publishDir "results/${task.process}", overwrite:'true'
     cache 'deep'
     conda "seqkit"
-    tag "$target.baseName"
+    tag "${target.baseName - '.primer3'}"
 
     input:
     path target
     path fasta
 
     output:
-    path "custom_primer3.conf"
+    path "*.primer3.conf"
 
     shell:
     '''
@@ -40,6 +40,6 @@ process primer3_conf {
     PRIMER_MASK_TEMPLATE=1
     PRIMER_MASK_KMERLIST_PREFIX=!{fasta}
     PRIMER_MASK_KMERLIST_PATH=./kmer_lists/
-    =" > custom_primer3.conf
+    =" > !{target.baseName}.primer3.conf
     '''
 }
