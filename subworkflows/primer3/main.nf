@@ -6,11 +6,10 @@ include { primer3_results2fasta } from "../../modules/primer3_results2fasta/"
 
 workflow PRIMER3 {
   take:
-  seq // = Channel.of(params.targetseq)
-  ref // = Channel.fromPath(params.fasta)
+  seq // [id, sequence]
+  ref // fasta
 
   main:
-  seq.view()
   seqkit_fetch_target(seq,ref)
   target = seqkit_fetch_target.out.fasta
 

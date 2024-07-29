@@ -4,8 +4,8 @@ include { validateParameters; paramsHelp; paramsSummaryLog; samplesheetToList } 
 
 // Print help message, supply typical command line usage for the pipeline
 if (params.help) {
-   log.info paramsHelp("nextflow run my_pipeline --input input_file.csv")
-   exit 0
+    log.info paramsHelp("nextflow run my_pipeline --input input_file.csv")
+    exit 0
 }
 
 // Validate input parameters
@@ -18,14 +18,22 @@ log.info paramsSummaryLog(workflow)
 ch_input = Channel.fromList(samplesheetToList(params.input, "assets/schema_input.json"))
 
 
+include { BEDTOOLS_GETFASTA } from './modules/nf-core/bedtools/getfasta'
+
 include { PRIMER3 } from './subworkflows/primer3'
 
 workflow {
-  // Read in bed file(s)
-  // Pull raw sequences in the bed files from the reference genome
-  // Run primer3 on the sequences
-  PRIMER3 (
-    Channel.of(params.targetseq),
-    Channel.fromPath(params.fasta),
-  )
+    // Pull raw sequences in the bed files from the reference genome
+    sequences = BEDTOOLS_GETFASTA (
+        ch_input,
+        params.fasta
+    ).fasta
+        .splitFasta( record: [id: true, seqString: true] )
+        .dump()
+
+    // Run primer3 on the sequences
+    PRIMER3 (
+        sequences,
+        Channel.fromPath(params.fasta),
+    )
 }

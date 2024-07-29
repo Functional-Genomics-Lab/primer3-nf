@@ -2,7 +2,7 @@ process seqkit_fetch_target {
     conda "seqkit"
 
     input:
-    val seq
+    tuple val(id), val(seq)
     path fasta
 
     output:
@@ -11,20 +11,20 @@ process seqkit_fetch_target {
 
     shell:
     '''
-    echo ">seq
+    echo ">!{id}
     !{seq}
     " > seq.fa
 
-    seqkit locate -i --gtf -p "!{seq}" !{fasta} > !{seq}_target.gtf
+    seqkit locate -i --gtf -p "!{seq}" !{fasta} > !{id}_target.gtf
 
-    seqkit subseq --gtf !{seq}_target.gtf -u 50000 -d 50000 !{fasta} > !{seq}_target.fa
+    seqkit subseq --gtf !{seq}_target.gtf -u 50000 -d 50000 !{fasta} > !{id}_target.fa
 
-    if [[ ! -s !{seq}_target.gtf ]]
+    if [[ ! -s !{id}_target.gtf ]]
     then
     exit 7
     fi
 
-    seqkit stat !{seq}_target.gtf
-    seqkit stat !{seq}_target.fa
+    seqkit stat !{id}_target.gtf
+    seqkit stat !{id}_target.fa
     '''
 }
