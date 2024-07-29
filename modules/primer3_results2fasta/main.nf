@@ -1,5 +1,5 @@
 process primer3_results2fasta {
-    publishDir "results/${task.process}",mode:'link',overwrite:'true'
+    publishDir "results/${task.process}", overwrite:'true'
     cache 'deep'
     tag "$results"
 
