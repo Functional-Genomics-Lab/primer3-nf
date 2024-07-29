@@ -1,5 +1,22 @@
 nextflow.enable.dsl=2
 
+include { validateParameters; paramsHelp; paramsSummaryLog; samplesheetToList } from 'plugin/nf-schema'
+
+// Print help message, supply typical command line usage for the pipeline
+if (params.help) {
+   log.info paramsHelp("nextflow run my_pipeline --input input_file.csv")
+   exit 0
+}
+
+// Validate input parameters
+// TODO validateParameters()
+
+// Print summary of supplied parameters
+log.info paramsSummaryLog(workflow)
+
+// Create a new channel of metadata from a sample sheet passed to the pipeline through the --input parameter
+ch_input = Channel.fromList(samplesheetToList(params.input, "assets/schema_input.json"))
+
 include { seqkit_fetch_target } from "./modules/seqkit_fetch_target"
 include { primer3_conf } from "./modules/primer3_conf/"
 include { primer3_index } from "./modules/primer3_index/"

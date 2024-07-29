@@ -1,0 +1,25 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/functional-genomics-lab/primer3-nf/master/assets/schema_input.json",
+    "title": "functional-genomics-lab/primer3-nf pipeline - params.input schema",
+    "description": "Schema for the file provided with params.input",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "sample": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "meta": ["my_sample"]
+            },
+            "bed": {
+                "type": "string",
+                "pattern": "^\\S+\\.bed$",
+                "format": "file-path",
+                "errorMessage": "BED file of tartet regions must be provided, cannot contain spaces and must have extension '.bed'"
+            }
+        },
+        "required": ["sample", "bed"]
+    }
+}

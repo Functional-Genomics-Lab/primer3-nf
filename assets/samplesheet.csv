@@ -1,0 +1,3 @@
+sample,bed
+test-datasets,https://github.com/nf-core/test-datasets/blob/modules/data/genomics/homo_sapiens/genome/genome.bed
+updsites,https://github.com/nf-core/test-datasets/raw/modules/data/genomics/homo_sapiens/genome/updsites.bed
