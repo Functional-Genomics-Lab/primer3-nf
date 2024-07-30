@@ -9,11 +9,11 @@ process primer3_calc {
     path kmer_lists, stageAs: 'kmer_lists/*'
 
     output:
-    path "*_primer3.txt"
+    path "*.txt"
     // TODO eval version
 
     shell:
     '''
-    primer3_core !{conf} > !{conf.baseName}_primer3.txt
+    primer3_core !{conf} > !{conf.baseName}.txt
     '''
 }
