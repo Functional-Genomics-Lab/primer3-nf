@@ -15,7 +15,7 @@
             },
             "bed": {
                 "type": "string",
-                "pattern": "^\\S+\\.bed$",
+                "pattern": "^\\S+\\.bed(\\.gz)?$",
                 "format": "file-path",
                 "errorMessage": "BED file of tartet regions must be provided, cannot contain spaces and must have extension '.bed'"
             }
