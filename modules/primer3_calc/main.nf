@@ -3,7 +3,6 @@ process primer3_calc {
     publishDir "results/${task.process}", overwrite:'true'
     cache 'deep'
     tag "$conf.baseName"
-    array 100
 
     input:
     path conf
