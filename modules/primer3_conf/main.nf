@@ -3,6 +3,7 @@ process primer3_conf {
     cache 'deep'
     conda "seqkit"
     tag "${target.baseName.replaceFirst(/\.primer3/, '')}"
+    array 100
 
     input:
     path target
