@@ -7,10 +7,10 @@ process primer3_results2fasta {
     path results
 
     output:
-    path "${results}.fa"
+    path "*.fa"
 
     script:
     """
-    results2fasta.py ${results} ${results}.fa
+    results2fasta.py ${results} ${results.baseName}.fa
     """
 }

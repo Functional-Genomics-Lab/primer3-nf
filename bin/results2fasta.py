@@ -4,8 +4,8 @@ import os
 import os.path
 import sys
 
-results = sys.argv[0]
-output_fasta = sys.argv[1]
+results = sys.argv[1]
+output_fasta = sys.argv[2]
 
 with open(results, "r") as input_handle:
     data = input_handle.read()
@@ -17,7 +17,7 @@ with open(results, "r") as input_handle:
 
     matches = list(re.finditer(bespoke_regex, data, flags=re.MULTILINE | re.DOTALL))
 
-output_handle = open("!{results}.fa", "w")
+output_handle = open(output_fasta, "w")
 
 for m in matches:
     line = (
