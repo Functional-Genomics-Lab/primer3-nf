@@ -13,7 +13,7 @@ process seqkit_fetch_target {
     shell:
     def prefix = task.ext.prefix ?: "${meta.id}"
     '''
-    cat !{fasta} | seqkit locate -i --gtf -f !{seq_fasta} > !{meta.id}_targets.gtf
+    cat !{fasta} | seqkit locate -i --gtf -f !{seq_fasta} -o !{meta.id}_targets.gtf
 
     seqkit subseq --gtf !{meta.id}_targets.gtf -u 50000 -d 50000 !{fasta} > !{meta.id}_targets.fa
 
