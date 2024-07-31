@@ -1,7 +1,5 @@
 process primer3_calc {
     conda "primer3"
-    publishDir "results/${task.process}", overwrite:'true'
-    cache 'deep'
     tag "${conf.baseName.replaceFirst(/\.primer3\$/, '')}"
 
     input:

@@ -1,7 +1,5 @@
 process primer3_index {
     conda "genometester4"
-    publishDir "results/${task.process}",overwrite:'true'
-    cache 'deep'
     tag "$fasta.baseName"
 
     input:

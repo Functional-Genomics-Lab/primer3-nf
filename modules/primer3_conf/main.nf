@@ -1,6 +1,4 @@
 process primer3_conf {
-    publishDir "results/${task.process}", overwrite:'true'
-    cache 'deep'
     conda "seqkit"
     tag "${target.baseName.replaceFirst(/\.primer3/, '')}"
 
