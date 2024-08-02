@@ -1,5 +1,6 @@
 process primer3_results2fasta {
     tag "$results.baseName"
+    errorStrategy 'ignore'
 
     input:
     path results
