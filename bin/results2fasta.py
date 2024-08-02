@@ -17,25 +17,28 @@ with open(results, "r") as input_handle:
 
     matches = list(re.finditer(bespoke_regex, data, flags=re.MULTILINE | re.DOTALL))
 
-output_handle = open(output_fasta, "w")
+print("Primer3 Results Read")
 
-for m in matches:
-    line = (
-        ">{ID} primer3 {SUBID} penalty:{PEN} type:LEFT product:{PROD}bp".format(
-            ID=id, SUBID=m.group("id"), PEN=m.group("penalty"), PROD=m.group("size")
+with open(output_fasta, "w") as output_handle:
+    for m in matches:
+        line = (
+            ">{ID} primer3 {SUBID} penalty:{PEN} type:LEFT product:{PROD}bp".format(
+                ID=id, SUBID=m.group("id"), PEN=m.group("penalty"), PROD=m.group("size")
+            )
+            + os.linesep
         )
-        + os.linesep
-    )
-    output_handle.write(line)
-    line = m.group("left") + os.linesep
-    output_handle.write(line)
-    line = (
-        ">{ID} primer3 {SUBID} penalty:{PEN} type:RIGHT product:{PROD}bp".format(
-            ID=id, SUBID=m.group("id"), PEN=m.group("penalty"), PROD=m.group("size")
+        output_handle.write(line)
+        line = m.group("left") + os.linesep
+        output_handle.write(line)
+        line = (
+            ">{ID} primer3 {SUBID} penalty:{PEN} type:RIGHT product:{PROD}bp".format(
+                ID=id, SUBID=m.group("id"), PEN=m.group("penalty"), PROD=m.group("size")
+            )
+            + os.linesep
         )
-        + os.linesep
-    )
-    output_handle.write(line)
-    line = m.group("right") + os.linesep
-    output_handle.write(line)
-    output_handle.close()
+        output_handle.write(line)
+        line = m.group("right") + os.linesep
+        output_handle.write(line)
+        output_handle.close()
+
+print("Fasta file created")
